@@ -208,6 +208,7 @@ function createBrowser({ terminal = true, observer = true } = {}) {
       this.options = options; this.cols = 120; this.rows = 30; this.output = ''; terminals.push(this);
     }
     loadAddon(addon) { addon.terminal = this; }
+    attachCustomKeyEventHandler(handler) { this.keyHandler = handler; }
     open(host) {
       this.host = host; this.input = document.createElement('textarea');
       this.input.className = 'xterm-helper-textarea'; host.appendChild(this.input);

@@ -393,6 +393,7 @@
         });
         fit = new window.FitAddon.FitAddon();
         terminal.loadAddon(fit);
+        terminal.attachCustomKeyEventHandler(event => !UI.isTerminalPasteKey(event, window.navigator?.platform));
         terminal.open(host);
         fit.fit();
         const ownTerminal = terminal, view = epoch;

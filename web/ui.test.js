@@ -268,6 +268,17 @@ test('terminal focus policy protects forms but restores xterm deliberately', () 
   assert.equal(ui.shouldFocusTerminal(true, 'INPUT', false), true);
 });
 
+test('terminal lets the browser paste Ctrl+V except on macOS', () => {
+  const key = (extra) => ({type: 'keydown', key: 'v', ctrlKey: true, altKey: false, metaKey: false, shiftKey: false, ...extra});
+  assert.equal(ui.isTerminalPasteKey(key(), 'Win32'), true);
+  assert.equal(ui.isTerminalPasteKey(key({key: 'V'}), 'Linux x86_64'), true);
+  assert.equal(ui.isTerminalPasteKey(key(), 'MacIntel'), false);
+  assert.equal(ui.isTerminalPasteKey(key({type: 'keyup'}), 'Win32'), false);
+  assert.equal(ui.isTerminalPasteKey(key({key: 'c'}), 'Win32'), false);
+  assert.equal(ui.isTerminalPasteKey(key({ctrlKey: false}), 'Win32'), false);
+  assert.equal(ui.isTerminalPasteKey(key({altKey: true}), 'Win32'), false);
+});
+
 test('terminal input sender forwards each xterm event synchronously', () => {
   const sent = [];
   const sender = ui.createTerminalInputSender(sent.push.bind(sent));
