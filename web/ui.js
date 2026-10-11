@@ -267,6 +267,14 @@
     return !/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(String(activeTag || '').toUpperCase());
   }
 
+  // xterm turns Ctrl+V into ^V. On Windows/Linux let the browser paste instead,
+  // like Windows Terminal and VS Code; dictation tools (e.g. Typeless) insert
+  // text by sending Ctrl+V. macOS pastes with Cmd+V, so Ctrl+V stays ^V there.
+  function isTerminalPasteKey(event, platform){
+    return event.type === 'keydown' && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey
+      && String(event.key).toLowerCase() === 'v' && !/Mac|iPhone|iPad/.test(String(platform || ''));
+  }
+
   function createTerminalInputSender(send){
     let active = true;
     function push(data, options){
@@ -532,6 +540,7 @@
     windowsConnectorCommand: windowsConnectorCommand,
     unixConnectorCommand: unixConnectorCommand,
     shouldFocusTerminal: shouldFocusTerminal,
+    isTerminalPasteKey: isTerminalPasteKey,
     supportsStructuredChat: supportsStructuredChat,
     createTerminalInputSender: createTerminalInputSender,
     devboxStatus: devboxStatus,
